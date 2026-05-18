@@ -7,8 +7,6 @@ module.exports = async function handler(req, res) {
   const { prompt } = req.body;
   const apiKey = process.env.REACT_APP_GROQ_KEY;
 
-  if (!prompt) return res.status(200).json({ text: "", error: "No prompt received" });
-
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -27,8 +25,7 @@ module.exports = async function handler(req, res) {
       })
     });
     const data = await response.json();
-    const text = data.choices?.[0]?.message?.content || "";
-    res.status(200).json({ text, promptLength: prompt.length, tokensUsed: data.usage?.total_tokens });
+    res.status(200).json({ fullResponse: data });
   } catch(e) {
     res.status(200).json({ error: e.message });
   }
