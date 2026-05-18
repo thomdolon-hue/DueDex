@@ -15,17 +15,18 @@ module.exports = async function handler(req, res) {
         "Authorization": `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: "llama-3.1-8b-instant",
+        model: "llama-3.3-70b-versatile",
         messages: [
           { role: "system", content: "You are a KYC/KYB due diligence expert. Always respond with valid JSON only. No markdown, no backticks, no explanation." },
           { role: "user", content: prompt }
         ],
         temperature: 0.1,
-        max_tokens: 6000
+        max_tokens: 4000
       })
     });
     const data = await response.json();
-    res.status(200).json({ debug: data });
+    const text = data.choices?.[0]?.message?.content || "";
+    res.status(200).json({ text });
   } catch(e) {
     res.status(200).json({ error: e.message });
   }
