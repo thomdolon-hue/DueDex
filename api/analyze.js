@@ -21,11 +21,12 @@ module.exports = async function handler(req, res) {
           { role: "user", content: prompt }
         ],
         temperature: 0.1,
-        max_tokens: 16000
+        max_tokens: 6000
       })
     });
     const data = await response.json();
-    res.status(200).json({ fullResponse: data });
+    const text = data.choices?.[0]?.message?.content || "";
+    res.status(200).json({ text });
   } catch(e) {
     res.status(200).json({ error: e.message });
   }
