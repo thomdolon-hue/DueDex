@@ -21,7 +21,7 @@ module.exports = async function handler(req, res) {
           { role: "user", content: prompt }
         ],
         temperature: 0.1,
-        max_tokens: 4000
+        max_tokens: 16000
       })
     });
     const data = await response.json();
