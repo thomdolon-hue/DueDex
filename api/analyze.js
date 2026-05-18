@@ -5,19 +5,28 @@ module.exports = async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
 
   const { prompt } = req.body;
-  const apiKey = process.env.REACT_APP_GEMINI_KEY;
+  const apiKey = process.env.REACT_APP_GROQ_KEY;
 
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.1, maxOutputTokens: 4000 }
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          { role: "system", content: "You are a KYC/KYB due diligence expert. Always respond with valid JSON only. No markdown, no backticks, no explanation." },
+          { role: "user", content: prompt }
+        ],
+        temperature: 0.1,
+        max_tokens: 4000
       })
     });
     const data = await response.json();
-    res.status(200).json({ debug: data });
+    const text = data.choices?.[0]?.message?.content || "";
+    res.status(200).json({ text });
   } catch(e) {
     res.status(200).json({ error: e.message });
   }
