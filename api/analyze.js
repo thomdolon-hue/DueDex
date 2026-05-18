@@ -34,7 +34,7 @@ module.exports = async function handler(req, res) {
       await new Promise(r => setTimeout(r, 2000));
       text = await callGroq();
     }
-    res.status(200).json({ text });
+    res.status(200).json({ text, fullResponse: data });
   } catch(e) {
     res.status(200).json({ error: e.message });
   }
