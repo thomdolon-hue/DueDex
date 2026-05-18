@@ -42,7 +42,7 @@ const css = `
   .result-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:1.25rem}
   .provider-name{font-size:20px;font-weight:600;color:#fff;margin-bottom:4px}
   .verdict{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:24px;font-size:13px;font-weight:600}
-  .verdict-yes{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(52,211,153,.3)}
+          .verdict-mid{background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.3)}
   .verdict-no{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(248,113,113,.3)}
   .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:1.25rem}
   .metric{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px 12px}
@@ -96,7 +96,12 @@ function LicenseRow({ lic }) {
 }
 
 function ProviderResult({ data }) {
-  const isApply = !data.recommendation?.toLowerCase().includes("not");
+  const rec = data.recommendation?.toLowerCase();
+  const isApply = rec?.includes("apply") && !rec?.includes("not");
+  const isConditional = rec?.includes("conditional") || rec?.includes("condition");
+  const verdictClass = isConditional ? "verdict-mid" : isApply ? "verdict-yes" : "verdict-no";
+  const verdictIcon = isConditional ? "!" : isApply ? "✓" : "✕";
+  const verdictText = isConditional ? "Conditional Apply" : isApply ? "Recommended" : "Do Not Apply";
   const licenses = data.licenses || [];
   const validCount = licenses.filter(l => ["verified","valid"].includes(l.status?.toLowerCase())).length;
   const invalidCount = licenses.filter(l => ["invalid","unverified","suspicious","not found"].includes(l.status?.toLowerCase())).length;
@@ -111,9 +116,9 @@ function ProviderResult({ data }) {
             <span className="tag tag-type" style={{background:"rgba(148,163,184,.08)",color:"#94a3b8",borderColor:"rgba(148,163,184,.15)"}}>{data.country}</span>
           </div>
         </div>
-        <div className={`verdict ${isApply ? "verdict-yes" : "verdict-no"}`}>
-          <span>{isApply ? "✓" : "✕"}</span>
-          {isApply ? "Recommended" : "Do Not Apply"}
+        <div className={`verdict ${verdictClass}`}>
+          <span>{verdictIcon}</span>
+          {verdictText}
         </div>
       </div>
 
