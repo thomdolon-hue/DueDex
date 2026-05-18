@@ -148,6 +148,13 @@ function ProviderResult({ data }) {
         <p className="body-text">{data.riskAssessment}</p>
       </div>
 
+      {data.paymentMethods?.length > 0 && (
+        <div className="section">
+          <div className="section-title">Payment Methods Supported</div>
+          <div>{data.paymentMethods.map(p => <span className="chip" key={p} style={{background:"rgba(99,102,241,.12)",color:"#a5b4fc",borderColor:"rgba(165,180,252,.2)"}}>{p}</span>)}</div>
+        </div>
+      )}
+
       {data.supportedRegions?.length > 0 && (
         <div className="section">
           <div className="section-title">Supported Regions</div>
@@ -209,6 +216,7 @@ Return this exact JSON structure:
   "licenses": [{"name":"","licenseNumber":"","issuingAuthority":"","status":"Verified or Invalid or Unverified or Suspicious","notes":""}],
   "acceptedCategories": ["list of accepted business types"],
   "supportedRegions": ["USA","EU","UK","Asia Pacific","Global","Latin America","Middle East"],
+  "paymentMethods": ["list of supported payment methods e.g. Visa, Mastercard, Apple Pay, Google Pay, SEPA, SWIFT, ACH, PayPal, Crypto"],
   "redFlags": ["red flags or empty array"],
   "recommendation": "Apply or Do Not Apply or Conditional",
   "recommendationDetail": "2-3 sentence explanation"
