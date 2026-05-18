@@ -227,7 +227,8 @@ Respond ONLY with a valid JSON object — no markdown, no backticks, no explanat
       } catch {
         jsonStr = jsonStr
           .replace(/,\s*([}\]])/g, "$1")
-          .replace(/([{\[,])\s*,/g, "$1");
+          // eslint-disable-next-line no-useless-escape
+          .replace(/([\{[\,])\s*,/g, "$1");
         const lastBrace = jsonStr.lastIndexOf("}");
         jsonStr = jsonStr.substring(0, lastBrace + 1);
         setResult(JSON.parse(jsonStr));
