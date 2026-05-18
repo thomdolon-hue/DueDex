@@ -230,7 +230,7 @@ Return this exact JSON structure:
       });
       if (!res.ok) { const e = await res.text(); throw new Error(`API error ${res.status}: ${e}`); }
       const data = await res.json();
-      if (data.error) throw new Error(data.error.message || "API returned an error");
+      if (data.error) throw new Error(JSON.stringify(data.error));
       const raw = data.text || "";
       const jsonMatch = raw.match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error("No JSON found in response");
