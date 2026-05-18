@@ -193,35 +193,25 @@ export default function App() {
 
     const providerInput = query.trim().replace(/^https?:\/\//i, "").replace(/^www\./i, "").replace(/\/$/, "").split("/")[0];
 
-    const prompt = `You are a KYC/KYB due diligence expert specializing in payment industry compliance and regulatory licensing.
+    const prompt = `You are a KYC/KYB due diligence expert for the payment industry. Respond ONLY with a valid JSON object, no markdown, no backticks.
 
-Provider (name or domain): "${providerInput}"
+Provider: "${providerInput}"
 Business model: "${biz}"
 Risk tier: "${risk}"
 
-Perform a thorough due diligence review. For licenses, list ALL regulatory licenses this provider is known to hold or claim (FCA, EMI, PCI-DSS, MAS, BaFin, FinCEN MSB, AUSTRAC, AISP/PISP, CBN, etc.). For each license, assess whether it is legitimately verifiable based on your knowledge of the provider and the issuing authority's public registry. Flag any license that appears suspicious, lapsed, unverifiable, or misrepresented.
-
-Respond ONLY with a valid JSON object — no markdown, no backticks, no explanation:
+Return this exact JSON structure:
 {
-  "providerName": "Official provider name",
+  "providerName": "official name",
   "providerType": "Acquirer / PSP / ISO / EMI / Payment Gateway",
-  "country": "Country of incorporation",
-  "registrationNumber": "Company reg number or 'Not publicly available'",
-  "riskAssessment": "2-3 sentence assessment of reputation, regulatory standing, and compatibility with the stated business model and risk tier",
-  "licenses": [
-    {
-      "name": "License type e.g. FCA Authorised Payment Institution",
-      "licenseNumber": "License or reference number if known",
-      "issuingAuthority": "e.g. Financial Conduct Authority (UK)",
-      "status": "One of: Verified / Invalid / Unverified / Suspicious",
-      "notes": "Brief note on legitimacy — e.g. confirmed on FCA register, or cannot be verified on regulator public registry"
-    }
-  ],
-  "acceptedCategories": ["list","of","accepted","business","types"],
-  "supportedRegions": ["list of regions supported e.g. USA, EU, UK, Asia Pacific, Global, Latin America, Middle East"],
-  "redFlags": ["any red flags or empty array"],
-  "recommendation": "Apply or Do Not Apply",
-  "recommendationDetail": "2-3 sentence explanation tailored to the business model and risk tier"
+  "country": "country of incorporation",
+  "registrationNumber": "reg number or Not publicly available",
+  "riskAssessment": "2-3 sentence assessment",
+  "licenses": [{"name":"","licenseNumber":"","issuingAuthority":"","status":"Verified or Invalid or Unverified or Suspicious","notes":""}],
+  "acceptedCategories": ["list of accepted business types"],
+  "supportedRegions": ["USA","EU","UK","Asia Pacific","Global","Latin America","Middle East"],
+  "redFlags": ["red flags or empty array"],
+  "recommendation": "Apply or Do Not Apply or Conditional",
+  "recommendationDetail": "2-3 sentence explanation"
 }`;
 
     try {
