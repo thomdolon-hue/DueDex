@@ -7,7 +7,7 @@ module.exports = async function handler(req, res) {
   const { prompt } = req.body;
   const apiKey = process.env.REACT_APP_GROQ_KEY;
 
-  const callGroq = async () => {
+  try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -25,16 +25,7 @@ module.exports = async function handler(req, res) {
       })
     });
     const data = await response.json();
-    return data.choices?.[0]?.message?.content || "";
-  };
-
-  try {
-    let text = await callGroq();
-    if (!text) {
-      await new Promise(r => setTimeout(r, 2000));
-      text = await callGroq();
-    }
-    res.status(200).json({ text, fullResponse: data });
+    res.status(200).json({ debug: data });
   } catch(e) {
     res.status(200).json({ error: e.message });
   }
