@@ -212,12 +212,13 @@ Respond ONLY with a valid JSON object — no markdown, no backticks, no explanat
 
     try {
       const apiKey = process.env.REACT_APP_GEMINI_KEY;
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({
-          contents:[{parts:[{text: prompt}]}],
-          generationConfig:{temperature:0.2, maxOutputTokens:4000}
+      const res = await fetch("/api/analyze", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ prompt })
+});
+const data = await res.json();
+const raw = data.text || "";
         })
       });
       if (!res.ok) { const e = await res.text(); throw new Error(`API error ${res.status}: ${e}`); }
