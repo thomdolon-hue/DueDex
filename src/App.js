@@ -308,7 +308,8 @@ Respond ONLY with a valid JSON object — no markdown, no backticks, no explanat
 
           <div className="disclaimer">
             Results are AI-generated for research purposes only and do not constitute legal or financial advice.<br/>
-            Always verify licenses directly with the relevant regulatory authority before making decisions.
+            Always verify licenses directly with the relevant regulatory authority before making decisions.<br/><br/>
+            Developed by <span style={{color:"#818cf8",fontWeight:500}}>Thomas Dolon</span>
           </div>
         </div>
       </div>
