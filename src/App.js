@@ -143,6 +143,13 @@ function ProviderResult({ data }) {
         <p className="body-text">{data.riskAssessment}</p>
       </div>
 
+      {data.supportedRegions?.length > 0 && (
+        <div className="section">
+          <div className="section-title">Supported Regions</div>
+          <div>{data.supportedRegions.map(r => <span className="chip" key={r} style={{background:"rgba(16,185,129,.08)",color:"#34d399",borderColor:"rgba(52,211,153,.2)"}}>{r}</span>)}</div>
+        </div>
+      )}
+
       {data.acceptedCategories?.length > 0 && (
         <div className="section">
           <div className="section-title">Accepted Business Types</div>
@@ -206,6 +213,7 @@ Respond ONLY with a valid JSON object — no markdown, no backticks, no explanat
     }
   ],
   "acceptedCategories": ["list","of","accepted","business","types"],
+  "supportedRegions": ["list of regions supported e.g. USA, EU, UK, Asia Pacific, Global, Latin America, Middle East"],
   "redFlags": ["any red flags or empty array"],
   "recommendation": "Apply or Do Not Apply",
   "recommendationDetail": "2-3 sentence explanation tailored to the business model and risk tier"
