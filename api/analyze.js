@@ -7,18 +7,18 @@ module.exports = async function handler(req, res) {
   const { prompt } = req.body;
   const apiKey = process.env.REACT_APP_GEMINI_KEY;
 
-  const fullPrompt = prompt + "\n\nCRITICAL: Your response must be ONLY a valid JSON object. No markdown, no backticks, no explanation, no text before or after. Start your response with { and end with }";
-
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: fullPrompt }] }],
-      generationConfig: { temperature: 0.1, maxOutputTokens: 4000 }
-    })
-  });
-
-  const data = await response.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-  res.status(200).json({ text });
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.1, maxOutputTokens: 4000 }
+      })
+    });
+    const data = await response.json();
+    res.status(200).json({ debug: data });
+  } catch(e) {
+    res.status(200).json({ error: e.message });
+  }
 };
