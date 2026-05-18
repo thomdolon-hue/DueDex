@@ -200,27 +200,12 @@ export default function App() {
 
     const providerInput = query.trim().replace(/^https?:\/\//i, "").replace(/^www\./i, "").replace(/\/$/, "").split("/")[0];
 
-    const prompt = `You are a KYC/KYB due diligence expert for the payment industry. Respond ONLY with a valid JSON object, no markdown, no backticks.
+    const prompt = `You are a KYC/KYB due diligence expert. Return ONLY a JSON object for this payment provider. No markdown, no backticks.
 
-Provider: "${providerInput}"
-Business model: "${biz}"
-Risk tier: "${risk}"
+Provider: "${providerInput}", Business: "${biz}", Risk: "${risk}"
 
-Return this exact JSON structure:
-{
-  "providerName": "official name",
-  "providerType": "Acquirer / PSP / ISO / EMI / Payment Gateway",
-  "country": "country of incorporation",
-  "registrationNumber": "reg number or Not publicly available",
-  "riskAssessment": "2-3 sentence assessment",
-  "licenses": [{"name":"","licenseNumber":"","issuingAuthority":"","status":"Verified or Invalid or Unverified or Suspicious","notes":""}],
-  "acceptedCategories": ["list of accepted business types"],
-  "supportedRegions": ["USA","EU","UK","Asia Pacific","Global","Latin America","Middle East"],
-  "paymentMethods": ["list of supported payment methods e.g. Visa, Mastercard, Apple Pay, Google Pay, SEPA, SWIFT, ACH, PayPal, Crypto"],
-  "redFlags": ["red flags or empty array"],
-  "recommendation": "Apply or Do Not Apply or Conditional",
-  "recommendationDetail": "2-3 sentence explanation"
-}`;
+JSON format:
+{"providerName":"","providerType":"PSP/Acquirer/ISO/EMI/Gateway","country":"","registrationNumber":"","riskAssessment":"","licenses":[{"name":"","licenseNumber":"","issuingAuthority":"","status":"Verified/Invalid/Unverified","notes":""}],"acceptedCategories":[],"supportedRegions":[],"paymentMethods":[],"redFlags":[],"recommendation":"Apply/Do Not Apply/Conditional","recommendationDetail":""}`;
 
     try {
       const res = await fetch("/api/analyze", {
@@ -230,7 +215,7 @@ Return this exact JSON structure:
       });
       if (!res.ok) { const e = await res.text(); throw new Error(`API error ${res.status}: ${e}`); }
       const data = await res.json();
-      if (data.error) throw new Error(JSON.stringify(data.error));
+      if (data.error) throw new Error(data.error.message || "API returned an error");
       const raw = data.text || "";
       const jsonMatch = raw.match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error("No JSON found in response");
