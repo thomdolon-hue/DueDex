@@ -183,7 +183,7 @@ function ProviderResult({ data }) {
 
       {data.redFlags?.length > 0 && (
         <div className="section">
-          <div className="section-title" style={{color:"#f87171"}}>Red Flags</div>
+          <div className="section-title" style={{color:"#f87171"}}>Adverse Media & Red Flags</div>
           {data.redFlags.map((f,i) => <div className="flag" key={i}>{f}</div>)}
         </div>
       )}
