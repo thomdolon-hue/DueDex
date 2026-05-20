@@ -185,6 +185,21 @@ function ProviderResult({ data }) {
               </div>
             ))}
           </div>
+          {(() => {
+            const addr = (data.companiesHouse.address_snippet || "").toLowerCase();
+            const flags = ["virtual office","mailbox","serviced office","coworking","co-working","registered agent"].filter(f => addr.includes(f));
+            return flags.length > 0 ? (
+              <div style={{marginTop:"0.75rem",padding:"8px 12px",background:"rgba(239,68,68,.08)",border:"1px solid rgba(248,113,113,.2)",borderRadius:8}}>
+                <span style={{fontSize:12,color:"#f87171",fontWeight:500}}>⚠ Address Risk: </span>
+                <span style={{fontSize:12,color:"#94a3b8"}}>{`Registered address appears to be a ${flags.join(", ")} — potential shell company indicator`}</span>
+              </div>
+            ) : (
+              <div style={{marginTop:"0.75rem",padding:"8px 12px",background:"rgba(16,185,129,.06)",border:"1px solid rgba(52,211,153,.15)",borderRadius:8}}>
+                <span style={{fontSize:12,color:"#34d399",fontWeight:500}}>✓ Address: </span>
+                <span style={{fontSize:12,color:"#94a3b8"}}>{data.companiesHouse.address_snippet}</span>
+              </div>
+            );
+          })()}
         </div>
       )}
 
