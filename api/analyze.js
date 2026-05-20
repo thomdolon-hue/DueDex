@@ -5,33 +5,25 @@ module.exports = async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
 
   const { prompt, providerName } = req.body;
-  const apiKey = process.env.REACT_APP_GROQ_KEY;
+  const groqKey = process.env.REACT_APP_GROQ_KEY;
+  const chKey = process.env.COMPANIES_HOUSE_KEY;
 
-  // FCA Register lookup
-  const checkFCA = async (name) => {
+  // Companies House lookup
+  const checkCompaniesHouse = async (name) => {
     try {
-      const searchRes = await fetch(`https://register.fca.org.uk/services/V0.1/Search?q=${encodeURIComponent(name)}&type=firm`, {
-        headers: {
-          "Accept": "application/json",
-          "X-AUTH-EMAIL": "duedex@demo.com",
-          "X-AUTH-TOKEN": "demo"
-        }
+      const r = await fetch(`https://api.company-information.service.gov.uk/search/companies?q=${encodeURIComponent(name)}&items_per_page=1`, {
+        headers: { "Authorization": "Basic " + Buffer.from(chKey + ":").toString("base64") }
       });
-      const data = await searchRes.json();
-      return data?.Data?.[0] || null;
-    } catch {
-      return null;
-    }
+      const data = await r.json();
+      return data?.items?.[0] || null;
+    } catch { return null; }
   };
 
   try {
-    const [groqResponse, fcaData] = await Promise.all([
+    const [groqRes, chData] = await Promise.all([
       fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
-        },
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${groqKey}` },
         body: JSON.stringify({
           model: "llama-3.3-70b-versatile",
           messages: [
@@ -42,12 +34,12 @@ module.exports = async function handler(req, res) {
           max_tokens: 5000
         })
       }),
-      checkFCA(providerName)
+      checkCompaniesHouse(providerName)
     ]);
 
-    const groqData = await groqResponse.json();
+    const groqData = await groqRes.json();
     const text = groqData.choices?.[0]?.message?.content || "";
-    res.status(200).json({ text, fcaData });
+    res.status(200).json({ text, companiesHouse: chData });
   } catch(e) {
     res.status(200).json({ error: e.message });
   }
