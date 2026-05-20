@@ -1,4 +1,4 @@
-import { useState } from "react"; // v2
+import { useState } from "react";
 
 const BUSINESS_MODELS = [
   "Adult / Entertainment","CBD / Hemp","Cryptocurrency / Crypto Exchange","Forex / FX Trading",
