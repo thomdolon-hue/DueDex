@@ -169,6 +169,25 @@ function ProviderResult({ data }) {
         </div>
       )}
 
+      {data.companiesHouse && data.companiesHouse.title?.toLowerCase().includes(data.providerName?.toLowerCase().split(" ")[0].toLowerCase()) && (
+        <div className="section">
+          <div className="section-title">Companies House (UK)</div>
+          <div className="metrics" style={{marginBottom:0}}>
+            {[
+              {label:"Company Name", value: data.companiesHouse.title},
+              {label:"Company Number", value: data.companiesHouse.company_number},
+              {label:"Status", value: data.companiesHouse.company_status},
+              {label:"Incorporated", value: data.companiesHouse.date_of_creation},
+            ].map(m => (
+              <div className="metric" key={m.label}>
+                <div className="metric-label">{m.label}</div>
+                <div className="metric-value" style={{color: m.label === "Status" && data.companiesHouse.company_status === "active" ? "#34d399" : m.label === "Status" ? "#f87171" : "#cbd5e1"}}>{m.value}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {data.adverseMedia && (
         <div className="section">
           <div className="section-title" style={{color: data.adverseMedia.found ? "#f87171" : "#34d399"}}>
@@ -225,7 +244,7 @@ JSON format:
       const res = await fetch("/api/analyze", {
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ prompt })
+        body: JSON.stringify({ prompt, providerName: providerInput })
       });
       if (!res.ok) { const e = await res.text(); throw new Error(`API error ${res.status}: ${e}`); }
       const data = await res.json();
@@ -235,7 +254,9 @@ JSON format:
       if (!jsonMatch) throw new Error("No JSON found in response");
       let jsonStr = jsonMatch[0];
       try {
-        setResult(JSON.parse(jsonStr));
+        const parsed = JSON.parse(jsonStr);
+      parsed.companiesHouse = data.companiesHouse || null;
+      setResult(parsed);
       } catch {
         jsonStr = jsonStr
           .replace(/,\s*([}\]])/g, "$1")
@@ -243,7 +264,9 @@ JSON format:
           .replace(/([\{[\,])\s*,/g, "$1");
         const lastBrace = jsonStr.lastIndexOf("}");
         jsonStr = jsonStr.substring(0, lastBrace + 1);
-        setResult(JSON.parse(jsonStr));
+        const parsed2 = JSON.parse(jsonStr);
+        parsed2.companiesHouse = data.companiesHouse || null;
+        setResult(parsed2);
       }
     } catch(e) {
       setError(`Error: ${e.message || "Could not retrieve results. Please try again."}`);
