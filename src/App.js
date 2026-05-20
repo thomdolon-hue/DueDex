@@ -169,6 +169,18 @@ function ProviderResult({ data }) {
         </div>
       )}
 
+      {data.adverseMedia && (
+        <div className="section">
+          <div className="section-title" style={{color: data.adverseMedia.found ? "#f87171" : "#34d399"}}>
+            {data.adverseMedia.found ? "⚠ Adverse Media Found" : "✓ No Adverse Media Found"}
+          </div>
+          <p className="body-text" style={{marginBottom: data.adverseMedia.flags?.length > 0 ? "0.75rem" : 0}}>{data.adverseMedia.summary}</p>
+          {data.adverseMedia.flags?.length > 0 && (
+            <div>{data.adverseMedia.flags.map(f => <span className="chip" key={f} style={{background:"rgba(239,68,68,.1)",color:"#f87171",borderColor:"rgba(248,113,113,.2)"}}>{f}</span>)}</div>
+          )}
+        </div>
+      )}
+
       {data.redFlags?.length > 0 && (
         <div className="section">
           <div className="section-title" style={{color:"#f87171"}}>Red Flags</div>
@@ -203,6 +215,8 @@ export default function App() {
     const prompt = `You are a KYC/KYB due diligence expert. Return ONLY a JSON object for this payment provider. No markdown, no backticks.
 
 Provider: "${providerInput}", Business: "${biz}", Risk: "${risk}"
+
+Check for any connection to: fraud, fraudulent, embezzlement, misappropriation, theft, forgery, falsification, misrepresentation, deceit, bribery, corruption, kickbacks, money laundering, financial crime, regulatory fine, enforcement action, cease and desist, sanctions, OFAC, SDN list, AML, KYC failure, BSA violation, insolvency, receivership, liquidation, data breach, cybersecurity incident, scandal, lawsuit, criminal charges, criminal investigation.
 
 JSON format:
 {"providerName":"","providerType":"PSP/Acquirer/ISO/EMI/Gateway","country":"","registrationNumber":"","riskAssessment":"","licenses":[{"name":"","licenseNumber":"","issuingAuthority":"","status":"Verified/Invalid/Unverified","notes":""}],"acceptedCategories":[],"supportedRegions":[],"paymentMethods":[],"redFlags":[],"recommendation":"Apply/Do Not Apply/Conditional","recommendationDetail":""}`;
